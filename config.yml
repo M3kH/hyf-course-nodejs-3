@@ -1,0 +1,72 @@
+title: Create REST server with NodeJS and Express
+tagline: Learn the basics to create an Express server and follow the REST principles.
+description: Learn the basics to create an Express server and follow the REST principles.
+
+tags:
+  - NodeJS
+  - JavaScript
+  - Express
+  - Server
+
+template:
+  name: hyf-homework-nodejs-3
+  repo: hyf-homework-express
+
+before:
+
+- type: updateBranchProtection
+  enforce_admins: false
+
+  # open issue 1 (welcome)
+- type: createIssue
+  title: Welcome
+  body: 00-intro.md
+  data:
+    prUrl: '%payload.repository.html_url%/compare/master...step-1?expand=1'
+
+
+steps:
+  # 1 - Enable CI
+- title: Create the first endpoint
+  description: Enable continuous integration and make the first endpoint.
+  link: '{{ repoUrl }}/issues/1'
+  event: check_run
+  actions:
+  # waits for ci to report a status, any status
+  - type: gate
+    left: '%payload.check_run.app.name%'
+    operator: ===
+    right: Travis CI
+
+  - type: gate
+    left: '%payload.check_run.pull_requests.length%'
+    operator: '>'
+    right: 0
+
+  - type: respond
+    issue: '%payload.check_run.pull_requests.0.number%'
+    with: 00_01-build-status.md
+
+- title: Create a Server and fix the build
+  description: Create a Server that would respond with Hello World!
+  link: '{{ repoUrl }}/pull/2'
+  event: check_run
+  actions:
+
+  - type: gate
+    left: '%payload.check_run.conclusion%'
+    operator: ===
+    right: success
+
+  - type: createReview
+    body: |
+      Great Job 👍, now merge the Pull Request!
+    event: APPROVE
+    pullRequest: '%payload.check_run.pull_requests.0.number%'
+
+  - type: mergePullRequest
+    pullRequest: '%payload.check_run.pull_requests.0.number%'
+
+  # close initial issue
+  - type: closeIssue
+    issue: Welcome
