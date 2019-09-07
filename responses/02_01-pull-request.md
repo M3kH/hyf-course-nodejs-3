@@ -1,4 +1,4 @@
-Solve Issue #4
+Solve the first step of Issue #3
 
 <pre>
   <b>As</b> Developer<br/>
