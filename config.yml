@@ -95,30 +95,34 @@ steps:
   - type: closeIssue
     issue: Welcome
 
-  # open pr #3
-  - type: createPullRequest
-    title: Create REST /users
-    body: 02_01-pull-request.md
-    head: step-2
-    action_id: newPRUserEndpoint
-
   # open issue #4
   - type: createIssue
     title: First REST method
     body: 02-intro.md
     action_id: linkGetUserEndpointIssue
     data:
-      prUrl: '%actions.newPRUserEndpoint.data.html_url%'
+      prUrl: '%payload.repository.html_url%/compare/master...step-2?expand=1'
 
   - type: respond
     with: 01_02-merged.md
     data:
       getUsersEndpointIssue: '%actions.linkGetUserEndpointIssue.data.html_url%'
 
+# Make PR for /users endpoint
+- title: Create PR for GET /users
+  description: Add endpoint to fetch all users
+  link: '{{ repoUrl }}/issue/2'
+  event: pull_request.opened
+  actions:
+
+  # open pr #3
+  - type: respond
+    with: 02_01-pull-request.md
+
 # Make the /users endpoint
 - title: First step in the business logic, GET /users
   description: Deliver your first REST endpoint!
-  link: '{{ repoUrl }}/pull/3'
+  link: '{{ repoUrl }}/pull/4'
   event: check_run.completed
   actions:
 
@@ -132,17 +136,17 @@ steps:
   - type: gate
     left: '%payload.check_run.pull_requests.0.number%'
     operator: ==
-    right: 3
+    right: 4
 
   # approve PullRequest
   - type: createReview
     body: 02_02-get-users-pass.md
-    pullRequest: 3
+    pullRequest: 4
     event: APPROVE
 
 - title: Merge /users Pull Request
   description: Merge the pull request!
-  link: '{{ repoUrl }}/pull/3'
+  link: '{{ repoUrl }}/pull/4'
   event: pull_request.closed
   actions:
 
@@ -150,26 +154,30 @@ steps:
   - type: gate
     left: '%payload.pull_request.number%'
     operator: ==
-    right: 3
+    right: 4
 
   # Update issue #4 with step-3
   - type: mergeBranch
     head: master
     base: step-3
 
-  # Create PR for step-3
-  - type: createPullRequest
-    title: 'GET and POST /user'
-    body: 03_01-pr-body.md
-    head: step-3
-    action_id: postUserStepPR
-
   # Instructions: POST /user
   - type: respond
     with: 03-intro.md
-    issue: 4
+    issue: 3
     data:
-      prUrl: '%actions.postUserStepPR.data.html_url%'
+      prUrl: '%payload.repository.html_url%/compare/master...step-3?expand=1'
+
+# Make PR for /users endpoint
+- title: Create PR for GET and POST /user
+  description: Add endpoint to fetch and create a user
+  link: '{{ repoUrl }}/issue/3'
+  event: pull_request.opened
+  actions:
+
+  # open pr #3
+  - type: respond
+    with: 03_01-pr-body.md
 
 # Complete the POST and GET /user
 - title: 'GET and POST /user'
@@ -192,13 +200,13 @@ steps:
 
   # approve PullRequest
   - type: createReview
-    body: 03_02-users-pass.md
+    body: 03_02-user-pass.md
     pullRequest: 5
     event: APPROVE
 
 - title: 'Merge GET/POST /user Pull Request'
   description: merge the pull request
-  link: '{{ repoUrl }}/pull/6'
+  link: '{{ repoUrl }}/pull/5'
   event: pull_request.closed
   actions:
 
@@ -213,19 +221,23 @@ steps:
     head: master
     base: step-4
 
-  # Create PR for step-4
-  - type: createPullRequest
-    title: 'Create DELETE /users'
-    body: 04_01-pr-body.md
-    head: step-4
-    action_id: deleteUserStepPR
-
   # Instructions: DELETE /user
   - type: respond
     with: 04-intro.md
-    issue: 4
+    issue: 3
     data:
-      prUrl: '%actions.deleteUserStepPR.data.html_url%'
+      prUrl: '%payload.repository.html_url%/compare/master...step-4?expand=1'
+
+# Make PR for /users endpoint
+- title: Create PR for DELETE /user
+  description: Add endpoint to fetch and create a user
+  link: '{{ repoUrl }}/issue/3'
+  event: pull_request.opened
+  actions:
+
+  # open pr #3
+  - type: respond
+    with: 04_01-pr-body.md
 
 # Complete the DELETE /user
 - title: 'DELETE /users'
@@ -244,12 +256,12 @@ steps:
   - type: gate
     left: '%payload.check_run.pull_requests.0.number%'
     operator: ==
-    right: 7
+    right: 6
 
   # approve PullRequest
   - type: createReview
     body: finish.md
-    pullRequest: 7
+    pullRequest: 6
     event: APPROVE
 
 - title: 🎉 Course Complete
