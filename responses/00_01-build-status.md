@@ -16,3 +16,10 @@ I know that is very little hint, but I'm confident that you can find the informa
 Show me what can you do!
 
 ![](https://media.giphy.com/media/mJz7vBUCtvQ5BHXJbx/giphy.gif)
+
+Maybe useful to know is that you can run the test locally!
+```
+npm run ci:test
+```
+
+🚀
